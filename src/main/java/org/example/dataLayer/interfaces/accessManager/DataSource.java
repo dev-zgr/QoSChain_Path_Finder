@@ -1,2 +1,4 @@
-package org.example.dataLayer.interfaces;public interface DataSource {
+package org.example.dataLayer.interfaces.accessManager;
+
+public interface DataSource {
 }

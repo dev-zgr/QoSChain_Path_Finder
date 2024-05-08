@@ -1,2 +1,4 @@
-package org.example.dataLayer.implementations.accessManager;public class DataSourceImpl {
+package org.example.dataLayer.implementations.accessManager;
+
+public class DataSourceImpl {
 }

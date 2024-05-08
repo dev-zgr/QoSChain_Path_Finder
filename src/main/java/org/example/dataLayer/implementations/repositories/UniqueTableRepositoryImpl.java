@@ -1,2 +1,4 @@
-package org.example.dataLayer.implementations.repositories;public class UniqueTableRepositoryImpl {
+package org.example.dataLayer.implementations.repositories;
+
+public class UniqueTableRepositoryImpl {
 }
