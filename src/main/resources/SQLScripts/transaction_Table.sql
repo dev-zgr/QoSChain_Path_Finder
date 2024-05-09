@@ -8,3 +8,32 @@ CREATE TABLE IF NOT EXISTS transaction_table (
     max_bandwidth INT,
     min_delay INT
 );
+
+
+DELIMITER $$
+CREATE TRIGGER trig_txID_check BEFORE INSERT ON transaction_table
+    FOR EACH ROW
+BEGIN
+    IF (NEW.tx_id REGEXP '^AS[0-9]+_[0-9]+$') = 0 THEN
+        SIGNAL SQLSTATE '40001'
+            SET MESSAGE_TEXT = 'Invalid Tx ID';
+    END IF;
+END$$
+DELIMITER
+
+
+DELIMITER $$
+CREATE TRIGGER trig_IngressNode_EgressNode_Check BEFORE INSERT ON transaction_table
+    FOR EACH ROW
+BEGIN
+    IF (NEW.ingress_node REGEXP '^R[0-9]+$') = 0 THEN
+        SIGNAL SQLSTATE '40001'
+            SET MESSAGE_TEXT = 'Invalid Ingress Node';
+    END IF;
+
+    IF (NEW.egress_node REGEXP '^R[0-9]+$') = 0 THEN
+        SIGNAL SQLSTATE '40001'
+            SET MESSAGE_TEXT = 'Invalid Egress Node';
+    END IF;
+END$$
+DELIMITER

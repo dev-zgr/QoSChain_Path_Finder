@@ -31,4 +31,82 @@ public class TransactionTableDataModel {
         this.max_bandwidth = 0;
         this.min_delay = 0;
     }
+
+    public String getTx_id() {
+        return tx_id;
+    }
+
+    public void setTx_id(String tx_id) {
+        this.tx_id = tx_id;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(String signature) {
+        this.signature = signature;
+    }
+
+    public String getAsn() {
+        return asn;
+    }
+
+    public void setAsn(String asn) {
+        this.asn = asn;
+    }
+
+    public String getPathlet_id() {
+        return pathlet_id;
+    }
+
+    public void setPathlet_id(String pathlet_id) {
+        this.pathlet_id = pathlet_id;
+    }
+
+    public String getIngress_node() {
+        return ingress_node;
+    }
+
+    public void setIngress_node(String ingress_node) {
+        this.ingress_node = ingress_node;
+    }
+
+    public String getEgress_node() {
+        return egress_node;
+    }
+
+    public void setEgress_node(String egress_node) {
+        this.egress_node = egress_node;
+    }
+
+    public int getMax_bandwidth() {
+        return max_bandwidth;
+    }
+
+    public void setMax_bandwidth(int max_bandwidth) {
+        this.max_bandwidth = max_bandwidth;
+    }
+
+    public int getMin_delay() {
+        return min_delay;
+    }
+
+    public void setMin_delay(int min_delay) {
+        this.min_delay = min_delay;
+    }
+
+    @Override
+    public String toString() {
+        return "TransactionTableDataModel{" +
+                "tx_id='" + tx_id + '\'' +
+                ", signature='" + signature + '\'' +
+                ", asn='" + asn + '\'' +
+                ", pathlet_id='" + pathlet_id + '\'' +
+                ", ingress_node='" + ingress_node + '\'' +
+                ", egress_node='" + egress_node + '\'' +
+                ", max_bandwidth=" + max_bandwidth +
+                ", min_delay=" + min_delay +
+                '}';
+    }
 }
