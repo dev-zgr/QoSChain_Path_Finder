@@ -1,6 +1,5 @@
 package org.example.dataLayer.interfaces.repositories;
 
-import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
 import org.example.dataLayer.implementations.dataModels.UniqueTableDataModel;
 
 import java.util.List;
@@ -16,7 +15,7 @@ public interface UniqueTableRepository {
     /**
      * Persists the edge data to the database. Creates new row if the edge does not exist, updates the existing row otherwise.
      * @param uniqueTableDataModels The list of edge data to be persisted.
-     * @return The persisted  list edge data if successful, null otherwise.
+     * @return The persisted list edge data if successful, false otherwise.
      */
     boolean saveEdge(List<UniqueTableDataModel> uniqueTableDataModels);
 
@@ -32,6 +31,12 @@ public interface UniqueTableRepository {
      * @return A list of all edges in the database.
      */
     List<UniqueTableDataModel> findAllEdges();
+
+    /**
+     * This method deletes all the transactions inside the transaction table.
+     * @return true if the transaction table is successfully cleared, false otherwise.
+     */
+    boolean resetUniqueTable();
 
 
 }

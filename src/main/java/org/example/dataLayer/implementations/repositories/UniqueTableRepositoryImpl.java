@@ -51,6 +51,7 @@ public class UniqueTableRepositoryImpl implements UniqueTableRepository {
         } catch (SQLException e) {
             return null;
         }
+
         return null;
     }
 
@@ -71,12 +72,12 @@ public class UniqueTableRepositoryImpl implements UniqueTableRepository {
     @Override
     public UniqueTableDataModel findEdgeByPathetId(String pathlethId) {
         String sql = "SELECT * FROM unique_table WHERE pathlet_id = ?";
-        try (Connection connection = DataSourceImpl.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)){
+        try (Connection connection = DataSourceImpl.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, pathlethId);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 return mapResultSetToUniqueTableDataModel(resultSet);
-            }else{
+            } else {
                 return null;
             }
         } catch (Exception e) {
@@ -101,6 +102,20 @@ public class UniqueTableRepositoryImpl implements UniqueTableRepository {
             return new ArrayList<>();
         }
         return UniqueTableDataModels;
+    }
+
+    @Override
+    public boolean resetUniqueTable() {
+        try (Connection connection = DataSourceImpl.getConnection()) {
+            String sql = "DELETE FROM unique_table WHERE TRUE";
+            try (Statement statement = connection.createStatement()) {
+                int rowsAffected = statement.executeUpdate(sql);
+                return rowsAffected > 0;
+            }
+        } catch (SQLException e) {
+            return false;
+        }
+
     }
 
     private UniqueTableDataModel mapResultSetToUniqueTableDataModel(ResultSet resultSet) throws SQLException {

@@ -1,17 +1,21 @@
 package org.example;
 
-import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
-import org.example.dataLayer.implementations.dataModels.UniqueTableDataModel;
 import org.example.dataLayer.implementations.repositories.TransactionTableRepositoryImpl;
-import org.example.dataLayer.implementations.repositories.UniqueTableRepositoryImpl;
 import org.example.dataLayer.interfaces.repositories.TransactionTableRepository;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.implementations.Graphs;
+import org.example.serviceLayer.randomizer.implementations.RandomTransactionGenerator;
+import org.example.serviceLayer.randomizer.interfaces.RandomTransactionGeneratorImpl;
+import org.example.serviceLayer.services.implementations.RandomizationServiceImpl;
+import org.example.serviceLayer.services.interfaces.RandomizationService;
 
-import java.util.List;
+import java.io.File;
 
 public class Main {
     public static void main(String[] args) {
-
+        File sampleDataFile = new File("src/main/resources/SQLScripts/dataSets/dataset_1.sql");
+        TransactionTableRepository transactionTableRepository = new TransactionTableRepositoryImpl();
+        RandomTransactionGenerator randomTransactionGenerator = new RandomTransactionGeneratorImpl(transactionTableRepository);
+        RandomizationService randomizationService = new RandomizationServiceImpl(transactionTableRepository, randomTransactionGenerator);
+        randomizationService.generateRandomTransactions(10L, 100, 1000, 10, 100);
+        System.out.println(transactionTableRepository.findLatestDistinctTransactions());
     }
 }

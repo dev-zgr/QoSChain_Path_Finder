@@ -4,6 +4,10 @@ import org.example.dataLayer.implementations.accessManager.DataSourceImpl;
 import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
 import org.example.dataLayer.interfaces.repositories.TransactionTableRepository;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,11 +34,10 @@ public class TransactionTableRepositoryImpl implements TransactionTableRepositor
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected == 1) {
-                System.out.println("Transaction data inserted successfully.");
+                return transactionTableDataModel;
             } else {
-                System.out.println("Failed to insert transaction data.");
+                return null;
             }
-            return transactionTableDataModel;
         } catch (Exception e){
             return null;
         }
@@ -113,6 +116,89 @@ public class TransactionTableRepositoryImpl implements TransactionTableRepositor
         return distinctTransactions;
     }
 
+    @Override
+    public boolean resetTransactionTable() {
+        try (Connection connection = DataSourceImpl.getConnection()) {
+            String sql = "DELETE FROM transaction_table WHERE TRUE";
+            try (Statement statement = connection.createStatement()) {
+                int rowsAffected = statement.executeUpdate(sql);
+                return rowsAffected > 0;
+            }
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean loadDataFromFile(File sampleDataFile) {
+        try(Connection connection = DataSourceImpl.getConnection()) {
+            BufferedReader reader = new BufferedReader(new FileReader(sampleDataFile));
+            String line;
+            List<String> transactions = new ArrayList<>();
+            while ((line = reader.readLine()) != null) {
+                transactions.add(line);
+                Statement statement = connection.createStatement();
+                statement.execute(line);
+            }
+            reader.close();
+            return true;
+        } catch (IOException | SQLException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String getAvailableTransactionID(String asnNumber) {
+        try(Connection connection = DataSourceImpl.getConnection()){
+            String sql = "SELECT MAX(CAST(SUBSTRING_INDEX(tx_id, '_', -1) AS UNSIGNED)) AS max_tx_id FROM transaction_table";
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            if (resultSet.next()) {
+                 int txID = resultSet.getInt("max_tx_id");
+                 return String.format("%s_%d", asnNumber,txID +1);
+            } else {
+                return "";
+            }
+
+        } catch (SQLException e) {
+            return "";
+        }
+    }
+
+    @Override
+    public List<String> getDistinctASNs() {
+        List<String> distinctASNs = new ArrayList<>();
+        try (Connection connection = DataSourceImpl.getConnection()) {
+            String sql = "SELECT DISTINCT asn FROM transaction_table";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    distinctASNs.add(resultSet.getString("asn"));
+                }
+            }
+        } catch (SQLException e) {
+            return null;
+        }
+        return distinctASNs;
+    }
+
+    @Override
+    public List<String> getDistinctPathletIDs() {
+        List<String> distinctPathletIDs = new ArrayList<>();
+        try (Connection connection = DataSourceImpl.getConnection()) {
+            String sql = "SELECT DISTINCT pathlet_id FROM transaction_table";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                ResultSet resultSet = preparedStatement.executeQuery();
+                while (resultSet.next()) {
+                    distinctPathletIDs.add(resultSet.getString("pathlet_id"));
+                }
+            }
+        } catch (SQLException e) {
+            return null;
+        }
+        return distinctPathletIDs;
+    }
+
 
     private TransactionTableDataModel mapResultSetToTransaction(ResultSet resultSet) throws SQLException {
         TransactionTableDataModel transaction = new TransactionTableDataModel();
@@ -126,4 +212,6 @@ public class TransactionTableRepositoryImpl implements TransactionTableRepositor
         transaction.setMin_delay(resultSet.getInt("min_delay"));
         return transaction;
     }
+
+
 }

@@ -2,6 +2,7 @@ package org.example.dataLayer.interfaces.repositories;
 
 import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ public interface TransactionTableRepository {
      * Persists the transaction data to the database.
      *
      * @param transactionTableDataModels The list of transaction data to be persisted.
-     * @return The persisted  list transaction data if successful, null otherwise.
+     * @return The persisted list transaction data if successful, false otherwise.
      */
     boolean saveTransaction(List<TransactionTableDataModel> transactionTableDataModels);
 
@@ -42,4 +43,36 @@ public interface TransactionTableRepository {
      */
     List<TransactionTableDataModel> findLatestDistinctTransactions();
 
+    /**
+     * This method deletes all the transactions inside the transaction table.
+     * @return true if the transaction table is successfully cleared, false otherwise.
+     */
+    boolean resetTransactionTable();
+
+
+    /**
+     * This method use to load data from a file to the database
+     * @param sampleDataFile The file to load data from
+     * @return true if the data is successfully loaded, false otherwise.
+     */
+    boolean loadDataFromFile(File sampleDataFile);
+
+    /**
+     * This method is used to get the available transaction for a given asn number
+     * @param asnNumber The asn number to get the available transaction for
+     * @return The available transaction for the given asn number
+     */
+    String getAvailableTransactionID(String asnNumber);
+
+    /**
+     * This method used to retrieve distinct ASNs numbers from the Transaction table
+     * @return the list of distinct ASNs is returned.
+     */
+    List<String> getDistinctASNs();
+
+    /**
+     * This method used to retrieve distinct pathleth ID numbers from the Transaction table
+     * @return the list of distinct ASNs is returned.
+     */
+    List<String> getDistinctPathletIDs();
 }
