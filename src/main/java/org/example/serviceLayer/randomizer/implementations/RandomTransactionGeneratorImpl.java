@@ -1,8 +1,8 @@
-package org.example.serviceLayer.randomizer.interfaces;
+package org.example.serviceLayer.randomizer.implementations;
 
 import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
 import org.example.dataLayer.interfaces.repositories.TransactionTableRepository;
-import org.example.serviceLayer.randomizer.implementations.RandomTransactionGenerator;
+import org.example.serviceLayer.randomizer.interfaces.RandomTransactionGenerator;
 
 import java.util.List;
 import java.util.Random;

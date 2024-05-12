@@ -24,7 +24,7 @@ public interface UniqueTableRepository {
      * @param pathlethId The pathlet_id to search for.
      * @return The edge data if found, null otherwise.
      */
-    UniqueTableDataModel findEdgeByPathetId(String pathlethId);
+    UniqueTableDataModel findEdgeByPathletId(String pathlethId);
 
     /**
      * Finds all edges in the database.

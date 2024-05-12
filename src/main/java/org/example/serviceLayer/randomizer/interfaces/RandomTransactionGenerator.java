@@ -1,4 +1,4 @@
-package org.example.serviceLayer.randomizer.implementations;
+package org.example.serviceLayer.randomizer.interfaces;
 
 import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
 

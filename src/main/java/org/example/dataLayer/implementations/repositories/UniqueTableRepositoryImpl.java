@@ -70,7 +70,7 @@ public class UniqueTableRepositoryImpl implements UniqueTableRepository {
     }
 
     @Override
-    public UniqueTableDataModel findEdgeByPathetId(String pathlethId) {
+    public UniqueTableDataModel findEdgeByPathletId(String pathlethId) {
         String sql = "SELECT * FROM unique_table WHERE pathlet_id = ?";
         try (Connection connection = DataSourceImpl.getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, pathlethId);

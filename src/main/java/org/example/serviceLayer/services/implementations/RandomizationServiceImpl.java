@@ -2,7 +2,7 @@ package org.example.serviceLayer.services.implementations;
 
 import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
 import org.example.dataLayer.interfaces.repositories.TransactionTableRepository;
-import org.example.serviceLayer.randomizer.implementations.RandomTransactionGenerator;
+import org.example.serviceLayer.randomizer.interfaces.RandomTransactionGenerator;
 import org.example.serviceLayer.services.interfaces.RandomizationService;
 
 public class RandomizationServiceImpl implements RandomizationService {
