@@ -4,6 +4,7 @@ import org.example.dataLayer.implementations.dataModels.UniqueTableDataModel;
 import org.example.dataLayer.interfaces.repositories.UniqueTableRepository;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.MultiGraph;
 import org.graphstream.graph.implementations.SingleGraph;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 public class GraphMapper {
     private final UniqueTableRepository uniqueTableRepository;
 
-    private final Graph graph = new SingleGraph("QoSChain");
+    private final Graph graph = new MultiGraph("QoSChain");
 
     public GraphMapper(UniqueTableRepository uniqueTableRepository) {
         this.uniqueTableRepository = uniqueTableRepository;
