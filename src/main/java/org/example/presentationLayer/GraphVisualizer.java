@@ -1,10 +1,7 @@
 package org.example.presentationLayer;
 
-import org.example.serviceLayer.problemSolver.DijkstraSolver;
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Element;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
+import org.example.serviceLayer.pathFinder.PathFinder;
+import org.graphstream.graph.*;
 import org.graphstream.ui.view.Viewer;
 
 import javax.swing.*;
@@ -12,18 +9,19 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Comparator;
-import java.util.stream.Collectors;
 
 public class GraphVisualizer extends JFrame {
     private final JComboBox<String> startNodeBox;
     private final JComboBox<String> endNodeBox;
+    private final JTextField requiredBandwidthBox;
+    private final JTextField  maxDelayBox;
     private final JPanel graphPanel;
     private final Graph graph;
-    private final DijkstraSolver dijkstraSolver;
+    private final PathFinder pathFinder;
 
-    public GraphVisualizer(Graph graph, DijkstraSolver dijkstraSolver) {
+    public GraphVisualizer(Graph graph, PathFinder pathFinder) {
         this.graph = graph;
-        this.dijkstraSolver = dijkstraSolver;
+        this.pathFinder = pathFinder;
         setTitle("QoSChain Shortest Path Visualizer");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -33,12 +31,18 @@ public class GraphVisualizer extends JFrame {
 
         startNodeBox = new JComboBox<>();
         endNodeBox = new JComboBox<>();
-        JButton calculateButton = new JButton("Calculate Shortest Path");
+        requiredBandwidthBox = new JTextField(10);
+        maxDelayBox = new JTextField(10);
+        JButton calculateButton = new JButton("Calculate The Path With The Minimum Delay");
 
         controlPanel.add(new JLabel("Start Node:"));
         controlPanel.add(startNodeBox);
         controlPanel.add(new JLabel("End Node:"));
         controlPanel.add(endNodeBox);
+        controlPanel.add(new JLabel("Required Bandwidth:"));
+        controlPanel.add(requiredBandwidthBox);
+        controlPanel.add(new JLabel("Max Delay:"));
+        controlPanel.add(maxDelayBox);
         controlPanel.add(calculateButton);
         add(controlPanel, BorderLayout.NORTH);
 
@@ -54,7 +58,9 @@ public class GraphVisualizer extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String startNode = (String) startNodeBox.getSelectedItem();
                 String endNode = (String) endNodeBox.getSelectedItem();
-                visualizeShortestPath(startNode, endNode);
+                int requiredBandwidth = Integer.parseInt(requiredBandwidthBox.getText());
+                int maxDelay = Integer.parseInt(maxDelayBox.getText());
+                visualizeShortestPath(startNode, endNode, requiredBandwidth, maxDelay);
             }
         });
         visualizeGraph();
@@ -75,13 +81,13 @@ public class GraphVisualizer extends JFrame {
 
     }
 
-    private void visualizeShortestPath(String startNode, String endNode) {
+    private void visualizeShortestPath(String startNode, String endNode, int requiredBandwidth, int maxDelay) {
         for (Edge edge : graph.edges().toList()) {
             edge.setAttribute("ui.style", "fill-color: black;");
         }
-        Iterable<Edge> shortestPath = dijkstraSolver.findTheShortestPathByEdges(graph, startNode, endNode);
-        if (shortestPath != null) {
-            for (Edge edge : shortestPath) {
+        Path leastDelayedPath = pathFinder.findTheLeastDelayedPath(graph, startNode, endNode, requiredBandwidth, maxDelay);
+        if (leastDelayedPath != null) {
+            for (Edge edge : leastDelayedPath.getEdgeSet()) {
                 edge.setAttribute("ui.style", "fill-color: red;");
             }
         }

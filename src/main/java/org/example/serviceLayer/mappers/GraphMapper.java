@@ -3,9 +3,7 @@ package org.example.serviceLayer.mappers;
 import org.example.dataLayer.implementations.dataModels.UniqueTableDataModel;
 import org.example.dataLayer.interfaces.repositories.UniqueTableRepository;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.graph.implementations.SingleGraph;
 
 import java.util.List;
 
@@ -25,7 +23,8 @@ public class GraphMapper {
             String ingressNode = uniqueEdge.getIngress_node();
             String egressNode = uniqueEdge.getEgress_node();
             String pathletId = uniqueEdge.getPathlet_id();
-            int weight = uniqueEdge.getMin_delay();
+            int minDelay = uniqueEdge.getMin_delay();
+            int maxBandwidth = uniqueEdge.getMax_bandwidth();
 
             if (graph.getNode(ingressNode) == null){
                 graph.addNode(ingressNode);
@@ -34,15 +33,20 @@ public class GraphMapper {
                 graph.addNode(egressNode);
             }
             if (graph.getEdge(pathletId) == null){
-                graph.addEdge(pathletId, ingressNode, egressNode).setAttribute("min_delay", weight);
+                graph.addEdge(pathletId, ingressNode, egressNode).setAttribute("min_delay", minDelay);
+                graph.getEdge(pathletId).setAttribute("max_bandwidth", maxBandwidth);
             }
         }
 
         graph.nodes().forEach(n -> n.setAttribute("label", n.getId()));
         graph.nodes().forEach(n -> n.setAttribute("ui.style", "text-size: 20;"));
 
-        graph.edges().forEach(e -> e.setAttribute("label", "" + (int) e.getNumber("min_delay")));
-        graph.edges().forEach(e -> e.setAttribute("ui.style", "text-size: 20;"));
+        graph.edges().forEach(e -> {
+            int minDelay = (int) e.getNumber("min_delay");
+            int maxBandwidth = (int) e.getNumber("max_bandwidth");
+            e.setAttribute("label", String.format("%d | %d", maxBandwidth, minDelay));
+            e.setAttribute("ui.style", "text-size: 20;");
+        });
 
         return graph;
     }
