@@ -17,7 +17,6 @@ public class PathFinder {
 
         if (sourceNode != null && targetNode != null) {
             List<Path> allPaths = findAllPaths(sourceNode, targetNode);
-            System.out.println(allPaths);
 
             for (Path path : allPaths) {
                 int totalBandwidth = 0;
