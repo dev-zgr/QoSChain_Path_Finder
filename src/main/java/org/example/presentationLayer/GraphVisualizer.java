@@ -1,7 +1,11 @@
 package org.example.presentationLayer;
 
+import org.example.dataLayer.implementations.dataModels.RequestDataModel;
 import org.example.serviceLayer.pathFinder.PathFinder;
-import org.graphstream.graph.*;
+import org.example.serviceLayer.randomizer.interfaces.RandomRequestGenerator;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Path;
 import org.graphstream.ui.view.Viewer;
 
 import javax.swing.*;
@@ -14,36 +18,83 @@ public class GraphVisualizer extends JFrame {
     private final JComboBox<String> startNodeBox;
     private final JComboBox<String> endNodeBox;
     private final JTextField requiredBandwidthBox;
-    private final JTextField  maxDelayBox;
+    private final JTextField maxDelayBox;
     private final JPanel graphPanel;
     private final Graph graph;
     private final PathFinder pathFinder;
+    private final RandomRequestGenerator randomRequestGenerator;
 
-    public GraphVisualizer(Graph graph, PathFinder pathFinder) {
+    public GraphVisualizer(Graph graph, PathFinder pathFinder, RandomRequestGenerator randomRequestGenerator) {
         this.graph = graph;
         this.pathFinder = pathFinder;
+        this.randomRequestGenerator = randomRequestGenerator;
+
         setTitle("QoSChain Shortest Path Visualizer");
         setSize(1000, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
-        JPanel controlPanel = new JPanel();
-        controlPanel.setLayout(new FlowLayout());
+
+        JPanel controlPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5); // padding
 
         startNodeBox = new JComboBox<>();
         endNodeBox = new JComboBox<>();
         requiredBandwidthBox = new JTextField(10);
         maxDelayBox = new JTextField(10);
-        JButton calculateButton = new JButton("Calculate The Path With The Minimum Delay");
+        JButton calculateButton = new JButton("Calculate The Request");
+        JButton randomRequestButton = new JButton("Generate Random Request");
 
-        controlPanel.add(new JLabel("Start Node:"));
-        controlPanel.add(startNodeBox);
-        controlPanel.add(new JLabel("End Node:"));
-        controlPanel.add(endNodeBox);
-        controlPanel.add(new JLabel("Required Bandwidth:"));
-        controlPanel.add(requiredBandwidthBox);
-        controlPanel.add(new JLabel("Max Delay:"));
-        controlPanel.add(maxDelayBox);
-        controlPanel.add(calculateButton);
+        // Row 1: Start Node
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.EAST;
+        controlPanel.add(new JLabel("Start Node:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        controlPanel.add(startNodeBox, gbc);
+
+        // Row 2: End Node
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        controlPanel.add(new JLabel("End Node:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        controlPanel.add(endNodeBox, gbc);
+
+        // Row 3: Required Bandwidth
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        controlPanel.add(new JLabel("Required Bandwidth:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        controlPanel.add(requiredBandwidthBox, gbc);
+
+        // Row 4: Max Delay
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.EAST;
+        controlPanel.add(new JLabel("Max Delay:"), gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        controlPanel.add(maxDelayBox, gbc);
+
+        // Row 5: Buttons
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        gbc.anchor = GridBagConstraints.EAST;
+        controlPanel.add(calculateButton, gbc);
+
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        controlPanel.add(randomRequestButton, gbc);
+
         add(controlPanel, BorderLayout.NORTH);
 
         // Create the graph visualization panel
@@ -53,16 +104,30 @@ public class GraphVisualizer extends JFrame {
 
         // Set node options
         setNodeOptions(graph);
+
         calculateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String startNode = (String) startNodeBox.getSelectedItem();
-                String endNode = (String) endNodeBox.getSelectedItem();
-                int requiredBandwidth = Integer.parseInt(requiredBandwidthBox.getText());
-                int maxDelay = Integer.parseInt(maxDelayBox.getText());
-                visualizeShortestPath(startNode, endNode, requiredBandwidth, maxDelay);
+                RequestDataModel request = new RequestDataModel();
+                request.setIngress_node((String) startNodeBox.getSelectedItem());
+                request.setEgress_node((String) endNodeBox.getSelectedItem());
+                request.setRequired_bandwidth(Integer.parseInt(requiredBandwidthBox.getText()));
+                request.setMax_delay(Integer.parseInt(maxDelayBox.getText()));
+                visualizeShortestPath(request);
             }
         });
+
+        randomRequestButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                RequestDataModel randomRequest = randomRequestGenerator.generateRandomRequest(graph);
+                startNodeBox.setSelectedItem(randomRequest.getIngress_node());
+                endNodeBox.setSelectedItem(randomRequest.getEgress_node());
+                requiredBandwidthBox.setText(String.valueOf(randomRequest.getRequired_bandwidth()));
+                maxDelayBox.setText(String.valueOf(randomRequest.getMax_delay()));
+            }
+        });
+
         visualizeGraph();
     }
 
@@ -73,19 +138,17 @@ public class GraphVisualizer extends JFrame {
                     startNodeBox.addItem(node.getId());
                     endNodeBox.addItem(node.getId());
                 });
-
     }
 
     private void visualizeGraph() {
         Viewer viewer = graph.display();
-
     }
 
-    private void visualizeShortestPath(String startNode, String endNode, int requiredBandwidth, int maxDelay) {
+    private void visualizeShortestPath(RequestDataModel request) {
         for (Edge edge : graph.edges().toList()) {
             edge.setAttribute("ui.style", "fill-color: black;");
         }
-        Path leastDelayedPath = pathFinder.findTheLeastDelayedPath(graph, startNode, endNode, requiredBandwidth, maxDelay);
+        Path leastDelayedPath = pathFinder.findTheLeastDelayedPath(graph, request);
         if (leastDelayedPath != null) {
             for (Edge edge : leastDelayedPath.getEdgeSet()) {
                 edge.setAttribute("ui.style", "fill-color: red;");
@@ -102,5 +165,4 @@ public class GraphVisualizer extends JFrame {
             return Integer.MAX_VALUE; // or any default value indicating parsing failure
         }
     }
-
 }

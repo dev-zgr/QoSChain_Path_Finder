@@ -8,12 +8,13 @@ import org.example.dataLayer.interfaces.repositories.UniqueTableRepository;
 import org.example.presentationLayer.GraphVisualizer;
 import org.example.serviceLayer.mappers.GraphMapper;
 import org.example.serviceLayer.pathFinder.PathFinder;
+import org.example.serviceLayer.randomizer.implementations.RandomRequestGeneratorImpl;
+import org.example.serviceLayer.randomizer.interfaces.RandomRequestGenerator;
 import org.example.serviceLayer.randomizer.interfaces.RandomTransactionGenerator;
 import org.example.serviceLayer.randomizer.implementations.RandomTransactionGeneratorImpl;
 import org.example.serviceLayer.services.implementations.RandomizationServiceImpl;
 import org.example.serviceLayer.services.interfaces.RandomizationService;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Path;
 
 import javax.swing.*;
 import java.io.File;
@@ -54,7 +55,7 @@ public class Main {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new GraphVisualizer(graph, new PathFinder()).setVisible(true);
+                new GraphVisualizer(graph, new PathFinder(), new RandomRequestGeneratorImpl()).setVisible(true);
             }
         });
 

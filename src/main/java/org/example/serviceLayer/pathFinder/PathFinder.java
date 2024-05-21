@@ -1,5 +1,6 @@
 package org.example.serviceLayer.pathFinder;
 
+import org.example.dataLayer.implementations.dataModels.RequestDataModel;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -8,12 +9,17 @@ import org.graphstream.graph.Path;
 import java.util.*;
 
 public class PathFinder {
-    public Path findTheLeastDelayedPath(Graph graph, String sourceNodeID, String targetNodeID, int requiredBandwidth, int maxDelay) {
+    public Path findTheLeastDelayedPath(Graph graph, RequestDataModel requestDataModel) {
+        String ingressNodeID = requestDataModel.getIngress_node();
+        String egressNodeID = requestDataModel.getEgress_node();
+        int requiredBandwidth = requestDataModel.getRequired_bandwidth();
+        int maxDelay = requestDataModel.getMax_delay();
+
         Path minDelayPath = null;
         int minDelay = Integer.MAX_VALUE;
 
-        Node sourceNode = graph.getNode(sourceNodeID);
-        Node targetNode = graph.getNode(targetNodeID);
+        Node sourceNode = graph.getNode(ingressNodeID);
+        Node targetNode = graph.getNode(egressNodeID);
 
         if (sourceNode != null && targetNode != null) {
             List<Path> allPaths = findAllPaths(sourceNode, targetNode);
