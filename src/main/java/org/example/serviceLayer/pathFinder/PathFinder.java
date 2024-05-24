@@ -25,7 +25,7 @@ public class PathFinder {
             List<Path> allPaths = findAllPaths(sourceNode, targetNode);
 
             for (Path path : allPaths) {
-                int totalBandwidth = 0;
+                int totalBandwidth = Integer.MAX_VALUE;
                 int totalDelay = 0;
 
                 for (Edge edge : path.getEdgeSet()) {
@@ -35,8 +35,9 @@ public class PathFinder {
                     if (bandwidthAttr != null && delayAttr != null) {
                         int bandwidth = Integer.parseInt(bandwidthAttr.toString());
                         int delay = Integer.parseInt(delayAttr.toString());
-
-                        totalBandwidth += bandwidth;
+                        if(bandwidth < totalBandwidth){
+                            totalBandwidth = bandwidth;
+                        }
                         totalDelay += delay;
                     }
                 }
