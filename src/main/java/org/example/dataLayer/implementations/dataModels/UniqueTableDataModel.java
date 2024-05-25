@@ -7,12 +7,18 @@ public class UniqueTableDataModel {
     private int max_bandwidth;
     private int min_delay;
 
-    public UniqueTableDataModel(String pathlet_id, String ingress_node, String egress_node, int max_bandwidth, int min_delay) {
+    private String asn;
+
+    private boolean isInterConnectingNode;
+
+    public UniqueTableDataModel(String pathlet_id, String ingress_node, String egress_node, int max_bandwidth, int min_delay, boolean isInterConnectingNode,String asnNumber) {
         this.pathlet_id = pathlet_id;
         this.ingress_node = ingress_node;
         this.egress_node = egress_node;
         this.max_bandwidth = max_bandwidth;
         this.min_delay = min_delay;
+        this.isInterConnectingNode = isInterConnectingNode;
+        this.asn = asnNumber;
     }
 
     public UniqueTableDataModel() {
@@ -21,8 +27,9 @@ public class UniqueTableDataModel {
         this.egress_node = null;
         this.max_bandwidth = 0;
         this.min_delay = 0;
+        this.isInterConnectingNode = false;
+        this.asn = null;
     }
-
     public String getPathlet_id() {
         return pathlet_id;
     }
@@ -61,6 +68,22 @@ public class UniqueTableDataModel {
 
     public void setMin_delay(int min_delay) {
         this.min_delay = min_delay;
+    }
+
+    public boolean isInterConnectingNode() {
+        return isInterConnectingNode;
+    }
+
+    public void setInterConnectingNode(boolean interConnectingNode) {
+        isInterConnectingNode = interConnectingNode;
+    }
+
+    public String getAsn() {
+        return asn;
+    }
+
+    public void setAsn(String asn) {
+        this.asn = asn;
     }
 
     @Override

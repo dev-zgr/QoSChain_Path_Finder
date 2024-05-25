@@ -14,7 +14,7 @@ public class RandomTransactionGeneratorImpl implements RandomTransactionGenerato
         this.transactionTableRepository = transactionTableRepository;
     }
     @Override
-    public TransactionTableDataModel generateRandomTransaction( int maxBandwidthBottomLimit, int maxBandwidthUpperLimit, int minDelayBottomLimit, int minDelayUpperLimit) {
+    public TransactionTableDataModel generateRandomTransaction(int maxBandwidthBottomLimit, int maxBandwidthUpperLimit, int minDelayBottomLimit, int minDelayUpperLimit, boolean isInterConnectingNode) {
         Random random = new Random(System.currentTimeMillis());
         List<String> asnList = transactionTableRepository.getDistinctASNs();
         String randomASN = asnList.get(random.nextInt(asnList.size()));
@@ -27,6 +27,6 @@ public class RandomTransactionGeneratorImpl implements RandomTransactionGenerato
         String randomEgressNode = nodes[1];
         int randomMaxBandwidth = random.nextInt(maxBandwidthBottomLimit,maxBandwidthUpperLimit);
         int randomMinDelay = random.nextInt(minDelayBottomLimit,minDelayUpperLimit);
-        return new TransactionTableDataModel(recentTXID,randomSignature,randomASN,randomPathletID,randomIngressNode,randomEgressNode,randomMaxBandwidth,randomMinDelay);
+        return new TransactionTableDataModel(recentTXID,randomSignature,randomASN,randomPathletID,randomIngressNode,randomEgressNode,randomMaxBandwidth,randomMinDelay,isInterConnectingNode);
     }
 }

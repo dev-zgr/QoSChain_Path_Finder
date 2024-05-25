@@ -1,16 +1,21 @@
 package org.example.serviceLayer.randomizer.implementations;
 
 import org.example.dataLayer.implementations.dataModels.RequestDataModel;
-import org.example.serviceLayer.randomizer.interfaces.RandomRequestGenerator;
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class RandomRequestGeneratorImpl implements RandomRequestGenerator {
-    @Override
-    public RequestDataModel generateRandomRequest(Graph graph) {
+public class RandomRequestGenerator{
+    /**
+     * Generates a random request based on the provided graph.
+     * The request includes a randomly chosen ingress node, egress node,
+     * required bandwidth, and maximum delay.
+     *
+     * @param graph Graph used for creating the random request
+     * @return A RequestDataModel object containing the randomly generated request details:
+     */
+    public  static RequestDataModel generateRandomRequest(Graph graph) {
         Random random = new Random(System.currentTimeMillis());
 
         int randomIngressNodeIndex;

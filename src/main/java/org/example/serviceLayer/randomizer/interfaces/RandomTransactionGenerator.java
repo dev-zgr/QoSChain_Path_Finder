@@ -11,5 +11,5 @@ public interface RandomTransactionGenerator {
      * @param minDelayUpperLimit upper limit of min delay in transaction generation
      * @return random Transaction
      */
-    TransactionTableDataModel generateRandomTransaction( int maxBandwidthBottomLimit, int maxBandwidthUpperLimit, int minDelayBottomLimit, int minDelayUpperLimit);
+    TransactionTableDataModel generateRandomTransaction(int maxBandwidthBottomLimit, int maxBandwidthUpperLimit, int minDelayBottomLimit, int minDelayUpperLimit, boolean isInterConnectingNode);
 }

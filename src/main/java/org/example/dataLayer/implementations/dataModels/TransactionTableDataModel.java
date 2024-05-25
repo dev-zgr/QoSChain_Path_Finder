@@ -10,7 +10,17 @@ public class TransactionTableDataModel {
     private int max_bandwidth;
     private int min_delay;
 
-    public TransactionTableDataModel(String tx_id, String signature, String asn, String pathlet_id, String ingress_node, String egress_node, int max_bandwidth, int min_delay) {
+    public boolean getIsInterConnectingNode() {
+        return isInterConnectingNode;
+    }
+
+    public void setInterConnectingNode(boolean interConnectingNode) {
+        isInterConnectingNode = interConnectingNode;
+    }
+
+    private boolean isInterConnectingNode;
+
+    public TransactionTableDataModel(String tx_id, String signature, String asn, String pathlet_id, String ingress_node, String egress_node, int max_bandwidth, int min_delay, boolean isInterConnectingNode) {
         this.tx_id = tx_id;
         this.signature = signature;
         this.asn = asn;
@@ -19,6 +29,7 @@ public class TransactionTableDataModel {
         this.egress_node = egress_node;
         this.max_bandwidth = max_bandwidth;
         this.min_delay = min_delay;
+        this.isInterConnectingNode = isInterConnectingNode;
     }
 
     public TransactionTableDataModel() {
@@ -30,6 +41,7 @@ public class TransactionTableDataModel {
         this.egress_node = null;
         this.max_bandwidth = 0;
         this.min_delay = 0;
+        this.isInterConnectingNode = false;
     }
 
     public String getTx_id() {
@@ -107,6 +119,7 @@ public class TransactionTableDataModel {
                 ", egress_node='" + egress_node + '\'' +
                 ", max_bandwidth=" + max_bandwidth +
                 ", min_delay=" + min_delay +
+                ", isInterConnectingNode=" + isInterConnectingNode +
                 '}';
     }
 }

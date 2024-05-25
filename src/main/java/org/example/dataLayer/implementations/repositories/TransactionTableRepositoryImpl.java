@@ -20,8 +20,8 @@ public class TransactionTableRepositoryImpl implements TransactionTableRepositor
     @Override
     public TransactionTableDataModel saveTransaction(TransactionTableDataModel transactionTableDataModel) {
         try (Connection connection = DataSourceImpl.getConnection()) {
-            String sql = "INSERT INTO transaction_table (tx_id, signature, asn, pathlet_id, ingress_node,egress_node,max_bandwidth,min_delay) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO transaction_table (tx_id, signature, asn, pathlet_id, ingress_node,egress_node,max_bandwidth,min_delay, is_interconnecting_node) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, transactionTableDataModel.getTx_id());
             preparedStatement.setString(2, transactionTableDataModel.getSignature());
@@ -31,6 +31,7 @@ public class TransactionTableRepositoryImpl implements TransactionTableRepositor
             preparedStatement.setString(6, transactionTableDataModel.getEgress_node());
             preparedStatement.setInt(7, transactionTableDataModel.getMax_bandwidth());
             preparedStatement.setInt(8, transactionTableDataModel.getMin_delay());
+            preparedStatement.setBoolean(9,transactionTableDataModel.getIsInterConnectingNode());
 
             int rowsAffected = preparedStatement.executeUpdate();
             if (rowsAffected == 1) {
@@ -210,6 +211,7 @@ public class TransactionTableRepositoryImpl implements TransactionTableRepositor
         transaction.setEgress_node(resultSet.getString("egress_node"));
         transaction.setMax_bandwidth(resultSet.getInt("max_bandwidth"));
         transaction.setMin_delay(resultSet.getInt("min_delay"));
+        transaction.setInterConnectingNode(resultSet.getBoolean("is_interconnecting_node"));
         return transaction;
     }
 

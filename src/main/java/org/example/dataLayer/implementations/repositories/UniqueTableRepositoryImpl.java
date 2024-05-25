@@ -16,8 +16,8 @@ public class UniqueTableRepositoryImpl implements UniqueTableRepository {
     @Override
     public UniqueTableDataModel saveEdge(UniqueTableDataModel uniqueTableDataModel) {
         String sqlSelect = "SELECT * FROM unique_table WHERE pathlet_id = ?";
-        String sqlInsert = "INSERT INTO unique_table (pathlet_id, ingress_node, egress_node, max_bandwidth,min_delay) VALUES (?, ?, ?, ?, ?)";
-        String sqlUpdate = "UPDATE unique_table SET max_bandwidth = ?, min_delay = ?  WHERE pathlet_id = ?";
+        String sqlInsert = "INSERT INTO unique_table (pathlet_id, ingress_node, egress_node, max_bandwidth, min_delay, asn, is_interconnecting_node) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sqlUpdate = "UPDATE unique_table SET max_bandwidth = ?, min_delay = ?, asn = ?, is_interconnecting_node = ? WHERE pathlet_id = ?";
 
         try (Connection connection = DataSourceImpl.getConnection();
              PreparedStatement selectStatement = connection.prepareStatement(sqlSelect);
@@ -32,17 +32,23 @@ public class UniqueTableRepositoryImpl implements UniqueTableRepository {
             if (resultSet.next()) {
                 updateStatement.setInt(1, uniqueTableDataModel.getMax_bandwidth());
                 updateStatement.setInt(2, uniqueTableDataModel.getMin_delay());
-                updateStatement.setString(3, uniqueTableDataModel.getPathlet_id());
+                updateStatement.setString(3, uniqueTableDataModel.getAsn()); // Assuming you meant to set ASN here
+                updateStatement.setBoolean(4, uniqueTableDataModel.isInterConnectingNode()); // Assuming there's a method isInterconnectingNode()
+                updateStatement.setString(5, uniqueTableDataModel.getPathlet_id());
+
                 int rowsAffected = updateStatement.executeUpdate();
                 if (rowsAffected == 1) {
                     return uniqueTableDataModel;
                 }
             } else {
                 insertStatement.setString(1, uniqueTableDataModel.getPathlet_id());
-                insertStatement.setString(2, uniqueTableDataModel.getIngress_node());
-                insertStatement.setString(3, uniqueTableDataModel.getEgress_node());
+                insertStatement.setString(2, uniqueTableDataModel.getIngress_node()); // Assuming there's a getIngress_node() method
+                insertStatement.setString(3, uniqueTableDataModel.getEgress_node()); // Assuming there's a getEgress_node() method
                 insertStatement.setInt(4, uniqueTableDataModel.getMax_bandwidth());
                 insertStatement.setInt(5, uniqueTableDataModel.getMin_delay());
+                insertStatement.setString(6, uniqueTableDataModel.getAsn());
+                insertStatement.setBoolean(7, uniqueTableDataModel.isInterConnectingNode());
+
                 int rowsAffected = insertStatement.executeUpdate();
                 if (rowsAffected == 1) {
                     return uniqueTableDataModel; // Return the inserted data
@@ -124,7 +130,9 @@ public class UniqueTableRepositoryImpl implements UniqueTableRepository {
                 resultSet.getString("ingress_node"),
                 resultSet.getString("egress_node"),
                 resultSet.getInt("max_bandwidth"),
-                resultSet.getInt("min_delay")
+                resultSet.getInt("min_delay"),
+                resultSet.getBoolean("is_interconnecting_node"),
+                resultSet.getString("asn")
         );
     }
 }
