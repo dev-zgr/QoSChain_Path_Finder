@@ -1,7 +1,7 @@
 package org.example.serviceLayer.randomizer.implementations;
 
-import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
-import org.example.dataLayer.interfaces.repositories.TransactionTableRepository;
+import org.example.dataLayer.dataModels.TransactionTableDataModel;
+import org.example.dataLayer.repositories.interfaces.TransactionTableRepository;
 import org.example.serviceLayer.randomizer.interfaces.RandomTransactionGenerator;
 
 import java.util.List;
@@ -14,7 +14,7 @@ public class RandomTransactionGeneratorImpl implements RandomTransactionGenerato
         this.transactionTableRepository = transactionTableRepository;
     }
     @Override
-    public TransactionTableDataModel generateRandomTransaction(int maxBandwidthBottomLimit, int maxBandwidthUpperLimit, int minDelayBottomLimit, int minDelayUpperLimit, boolean isInterConnectingNode) {
+    public TransactionTableDataModel generateRandomTransaction(int maxBandwidthBottomLimit, int maxBandwidthUpperLimit, int minDelayBottomLimit, int minDelayUpperLimit) {
         Random random = new Random(System.currentTimeMillis());
         List<String> asnList = transactionTableRepository.getDistinctASNs();
         String randomASN = asnList.get(random.nextInt(asnList.size()));
@@ -22,6 +22,7 @@ public class RandomTransactionGeneratorImpl implements RandomTransactionGenerato
         String randomSignature = String.format("0x%s", random.nextInt(1000000));
         List<String> pathletList = transactionTableRepository.getDistinctPathletIDs();
         String randomPathletID = pathletList.get(random.nextInt(pathletList.size()));
+        boolean isInterConnectingNode = transactionTableRepository.findIsInterConnectingNode(randomPathletID);
         String[] nodes = randomPathletID.split("_");
         String randomIngressNode = nodes[0];
         String randomEgressNode = nodes[1];

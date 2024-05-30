@@ -1,7 +1,7 @@
 package org.example.serviceLayer.mappers;
 
-import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
-import org.example.dataLayer.implementations.dataModels.UniqueTableDataModel;
+import org.example.dataLayer.dataModels.TransactionTableDataModel;
+import org.example.dataLayer.dataModels.UniqueTableDataModel;
 
 /**
  * This class maps the TransactionTableDataModel to UniqueTableDataModel

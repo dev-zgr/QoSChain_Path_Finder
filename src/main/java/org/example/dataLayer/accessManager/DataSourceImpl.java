@@ -1,7 +1,4 @@
-package org.example.dataLayer.implementations.accessManager;
-
-import org.example.dataLayer.interfaces.accessManager.DataSource;
-
+package org.example.dataLayer.accessManager;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

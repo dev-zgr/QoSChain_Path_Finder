@@ -1,8 +1,8 @@
-package org.example.dataLayer.implementations.repositories;
+package org.example.dataLayer.repositories.implementations;
 
-import org.example.dataLayer.implementations.accessManager.DataSourceImpl;
-import org.example.dataLayer.implementations.dataModels.UniqueTableDataModel;
-import org.example.dataLayer.interfaces.repositories.UniqueTableRepository;
+import org.example.dataLayer.accessManager.DataSourceImpl;
+import org.example.dataLayer.dataModels.UniqueTableDataModel;
+import org.example.dataLayer.repositories.interfaces.UniqueTableRepository;
 
 import java.sql.*;
 import java.util.ArrayList;

@@ -1,8 +1,8 @@
-package org.example.dataLayer.implementations.repositories;
+package org.example.dataLayer.repositories.implementations;
 
-import org.example.dataLayer.implementations.accessManager.DataSourceImpl;
-import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
-import org.example.dataLayer.interfaces.repositories.TransactionTableRepository;
+import org.example.dataLayer.accessManager.DataSourceImpl;
+import org.example.dataLayer.dataModels.TransactionTableDataModel;
+import org.example.dataLayer.repositories.interfaces.TransactionTableRepository;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -198,6 +198,24 @@ public class TransactionTableRepositoryImpl implements TransactionTableRepositor
             return null;
         }
         return distinctPathletIDs;
+    }
+
+    @Override
+    public boolean findIsInterConnectingNode(String pathletID) {
+        try (Connection connection = DataSourceImpl.getConnection()) {
+            String sql = "SELECT is_interconnecting_node FROM transaction_table WHERE pathlet_id = ?";
+            try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+                preparedStatement.setString(1, pathletID);
+                ResultSet resultSet = preparedStatement.executeQuery();
+                if (resultSet.next()) {
+                    return resultSet.getBoolean("is_interconnecting_node");
+                } else {
+                    return false;
+                }
+            }
+        } catch (SQLException e) {
+            return false;
+        }
     }
 
 

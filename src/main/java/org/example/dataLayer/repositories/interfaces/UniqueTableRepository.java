@@ -1,6 +1,6 @@
-package org.example.dataLayer.interfaces.repositories;
+package org.example.dataLayer.repositories.interfaces;
 
-import org.example.dataLayer.implementations.dataModels.UniqueTableDataModel;
+import org.example.dataLayer.dataModels.UniqueTableDataModel;
 
 import java.util.List;
 

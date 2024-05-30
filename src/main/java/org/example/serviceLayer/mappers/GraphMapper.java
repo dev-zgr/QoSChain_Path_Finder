@@ -1,7 +1,7 @@
 package org.example.serviceLayer.mappers;
 
-import org.example.dataLayer.implementations.dataModels.UniqueTableDataModel;
-import org.example.dataLayer.interfaces.repositories.UniqueTableRepository;
+import org.example.dataLayer.dataModels.UniqueTableDataModel;
+import org.example.dataLayer.repositories.interfaces.UniqueTableRepository;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.implementations.MultiGraph;
 

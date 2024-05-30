@@ -1,6 +1,6 @@
 package org.example.serviceLayer.randomizer.interfaces;
 
-import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
+import org.example.dataLayer.dataModels.TransactionTableDataModel;
 
 public interface RandomTransactionGenerator {
     /**
@@ -11,5 +11,5 @@ public interface RandomTransactionGenerator {
      * @param minDelayUpperLimit upper limit of min delay in transaction generation
      * @return random Transaction
      */
-    TransactionTableDataModel generateRandomTransaction(int maxBandwidthBottomLimit, int maxBandwidthUpperLimit, int minDelayBottomLimit, int minDelayUpperLimit, boolean isInterConnectingNode);
+    TransactionTableDataModel generateRandomTransaction(int maxBandwidthBottomLimit, int maxBandwidthUpperLimit, int minDelayBottomLimit, int minDelayUpperLimit);
 }

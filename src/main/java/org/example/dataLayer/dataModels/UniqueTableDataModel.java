@@ -1,4 +1,4 @@
-package org.example.dataLayer.implementations.dataModels;
+package org.example.dataLayer.dataModels;
 
 public class UniqueTableDataModel {
     private String pathlet_id;

@@ -1,6 +1,6 @@
 package org.example.serviceLayer.services.interfaces;
 
-import org.example.dataLayer.implementations.dataModels.RequestDataModel;
+import org.example.dataLayer.dataModels.RequestDataModel;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
 

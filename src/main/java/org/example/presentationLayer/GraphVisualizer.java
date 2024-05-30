@@ -1,6 +1,6 @@
 package org.example.presentationLayer;
 
-import org.example.dataLayer.implementations.dataModels.RequestDataModel;
+import org.example.dataLayer.dataModels.RequestDataModel;
 import org.example.serviceLayer.services.interfaces.QoSChainService;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Element;

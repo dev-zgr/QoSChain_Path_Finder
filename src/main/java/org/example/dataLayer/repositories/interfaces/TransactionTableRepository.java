@@ -1,6 +1,7 @@
-package org.example.dataLayer.interfaces.repositories;
+package org.example.dataLayer.repositories.interfaces;
 
-import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
+import org.example.dataLayer.dataModels.TransactionTableDataModel;
+import org.example.dataLayer.dataModels.UniqueTableDataModel;
 
 import java.io.File;
 import java.util.List;
@@ -75,4 +76,6 @@ public interface TransactionTableRepository {
      * @return the list of distinct ASNs is returned.
      */
     List<String> getDistinctPathletIDs();
+
+    boolean findIsInterConnectingNode(String pathletID);
 }

@@ -6,5 +6,5 @@ public interface RandomizationService {
      * This method works asynchronously
      * @param numberOfTransactions number of transactions to generate
      */
-    void generateRandomTransactions(Long numberOfTransactions, int maxBandwidthBottomLimit, int maxBandwidthUpperLimit, int minDelayBottomLimit, int minDelayUpperLimit, boolean isInterConnectingNode);
+    void generateRandomTransactions(Long numberOfTransactions, int maxBandwidthBottomLimit, int maxBandwidthUpperLimit, int minDelayBottomLimit, int minDelayUpperLimit);
 }

@@ -1,6 +1,6 @@
 package org.example.serviceLayer.pathFinder;
 
-import org.example.dataLayer.implementations.dataModels.RequestDataModel;
+import org.example.dataLayer.dataModels.RequestDataModel;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
@@ -25,7 +25,7 @@ public class PathFinder {
             List<Path> allPaths = findAllPaths(sourceNode, targetNode);
 
             for (Path path : allPaths) {
-                int totalBandwidth = Integer.MAX_VALUE;
+                int minBandwidth = Integer.MAX_VALUE;
                 int totalDelay = 0;
 
                 for (Edge edge : path.getEdgeSet()) {
@@ -35,19 +35,20 @@ public class PathFinder {
                     if (bandwidthAttr != null && delayAttr != null) {
                         int bandwidth = Integer.parseInt(bandwidthAttr.toString());
                         int delay = Integer.parseInt(delayAttr.toString());
-                        if(bandwidth < totalBandwidth){
-                            totalBandwidth = bandwidth;
+                        if(bandwidth < minBandwidth && bandwidth >= 0){
+                            minBandwidth = bandwidth;
                         }
                         totalDelay += delay;
                     }
                 }
 
-                if (totalBandwidth >= requiredBandwidth && totalDelay <= maxDelay && totalDelay < minDelay) {
+                if (minBandwidth >= requiredBandwidth && totalDelay <= maxDelay && totalDelay < minDelay) {
                     minDelay = totalDelay;
                     minDelayPath = path;
                 }
             }
         }
+        System.out.println(minDelayPath);
 
         return minDelayPath;
     }

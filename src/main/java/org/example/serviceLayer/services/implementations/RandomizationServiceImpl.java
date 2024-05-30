@@ -1,8 +1,8 @@
 package org.example.serviceLayer.services.implementations;
 
-import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
-import org.example.dataLayer.interfaces.repositories.TransactionTableRepository;
-import org.example.dataLayer.interfaces.repositories.UniqueTableRepository;
+import org.example.dataLayer.dataModels.TransactionTableDataModel;
+import org.example.dataLayer.repositories.interfaces.TransactionTableRepository;
+import org.example.dataLayer.repositories.interfaces.UniqueTableRepository;
 import org.example.serviceLayer.randomizer.interfaces.RandomTransactionGenerator;
 import org.example.serviceLayer.services.interfaces.RandomizationService;
 
@@ -15,11 +15,11 @@ public class RandomizationServiceImpl implements RandomizationService {
         this.randomTransactionGenerator = randomTransactionGenerator;
     }
     @Override
-    public void generateRandomTransactions(Long numberOfTransactions, int maxBandwidthBottomLimit, int maxBandwidthUpperLimit, int minDelayBottomLimit, int minDelayUpperLimit, boolean isInterConnectingNode) {
+    public void generateRandomTransactions(Long numberOfTransactions, int maxBandwidthBottomLimit, int maxBandwidthUpperLimit, int minDelayBottomLimit, int minDelayUpperLimit) {
         for (long i = 0; i < numberOfTransactions; i++) {
                 TransactionTableDataModel transaction = randomTransactionGenerator.generateRandomTransaction(
                         maxBandwidthBottomLimit, maxBandwidthUpperLimit,
-                        minDelayBottomLimit, minDelayUpperLimit, isInterConnectingNode);
+                        minDelayBottomLimit, minDelayUpperLimit);
                 transactionTableRepository.saveTransaction(transaction);
             }
     }

@@ -1,10 +1,10 @@
 package org.example.serviceLayer.services.implementations;
 
-import org.example.dataLayer.implementations.dataModels.RequestDataModel;
-import org.example.dataLayer.implementations.dataModels.TransactionTableDataModel;
-import org.example.dataLayer.implementations.dataModels.UniqueTableDataModel;
-import org.example.dataLayer.interfaces.repositories.TransactionTableRepository;
-import org.example.dataLayer.interfaces.repositories.UniqueTableRepository;
+import org.example.dataLayer.dataModels.RequestDataModel;
+import org.example.dataLayer.dataModels.TransactionTableDataModel;
+import org.example.dataLayer.dataModels.UniqueTableDataModel;
+import org.example.dataLayer.repositories.interfaces.TransactionTableRepository;
+import org.example.dataLayer.repositories.interfaces.UniqueTableRepository;
 import org.example.serviceLayer.mappers.GraphMapper;
 import org.example.serviceLayer.mappers.TransactionMapper;
 import org.example.serviceLayer.pathFinder.PathFinder;
@@ -17,10 +17,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 public class QoSChainServiceImpl implements QoSChainService {
     private final PathFinder pathFinder;
-    private final Graph graph;
+    private volatile Graph graph;
     private final RandomTransactionGenerator randomTransactionGenerator;
     private final TransactionTableRepository transactionTableRepository;
     private final UniqueTableRepository uniqueTableRepository;
@@ -59,37 +60,37 @@ public class QoSChainServiceImpl implements QoSChainService {
     }
 
     @Override
-    public Path calculateTheRequest(RequestDataModel request) {
-        pauseRandomTransactionGeneration(10);
+    public synchronized Path calculateTheRequest(RequestDataModel request) {
+        pauseRandomTransactionGeneration(100000);
         Path path = pathFinder.findTheLeastDelayedPath(this.graph, request);
+        System.out.println(path.getEdgePath());
         if (path != null) {
-
-            path
-                    .getEdgePath()
-                    .stream()
-                    .map(Element::getId)
-                    .map(pathletID -> {
-                        UniqueTableDataModel temporaryData = uniqueTableRepository.findEdgeByPathletId(pathletID);
-                        String recentTXID = transactionTableRepository.getAvailableTransactionID(temporaryData.getAsn());
-                        String randomSignature = String.format("0x%s", new Random().nextInt(1000000));
-                        return new TransactionTableDataModel(
-                                recentTXID,
-                                randomSignature,
-                                temporaryData.getAsn(),
-                                temporaryData.getPathlet_id(),
-                                temporaryData.getIngress_node(),
-                                temporaryData.getEgress_node(),
-                                temporaryData.getMax_bandwidth() - request.getRequired_bandwidth(),
-                                temporaryData.getMin_delay(),
-                                temporaryData.isInterConnectingNode());
-                    })
-                    .forEach((transaction) -> {
-                                transactionTableRepository.saveTransaction(transaction);
-                                uniqueTableRepository.saveEdge(TransactionMapper.mapTransactionTableDataModelToUniqueTableDataModel(transaction, new UniqueTableDataModel()));
-                            }
-                    );
-            updateGraph(graphMapper.mapUniqueTableDataModelToGraph(),false);
-
+            synchronized (this) {
+                path.getEdgePath()
+                        .stream()
+                        .map(Element::getId)
+                        .map(pathletID -> {
+                            UniqueTableDataModel temporaryData = uniqueTableRepository.findEdgeByPathletId(pathletID);
+                            String recentTXID = transactionTableRepository.getAvailableTransactionID(temporaryData.getAsn());
+                            String randomSignature = String.format("0x%s", new Random().nextInt(1000000));
+                            return new TransactionTableDataModel(
+                                    recentTXID,
+                                    randomSignature,
+                                    temporaryData.getAsn(),
+                                    temporaryData.getPathlet_id(),
+                                    temporaryData.getIngress_node(),
+                                    temporaryData.getEgress_node(),
+                                    temporaryData.getMax_bandwidth() - request.getRequired_bandwidth(),
+                                    temporaryData.getMin_delay(),
+                                    temporaryData.isInterConnectingNode());
+                        }).collect(Collectors.toList())
+                        .forEach((transaction) -> {
+                                    transactionTableRepository.saveTransaction(transaction);
+                                    uniqueTableRepository.saveEdge(TransactionMapper.mapTransactionTableDataModelToUniqueTableDataModel(transaction, new UniqueTableDataModel()));
+                                }
+                        );
+                updateGraph(graphMapper.mapUniqueTableDataModelToGraph(), false);
+            }
         }
         return path;
     }
@@ -119,12 +120,12 @@ public class QoSChainServiceImpl implements QoSChainService {
             while (true) {
                 try {
                     if (generating) {
-                        TransactionTableDataModel randomTransaction = randomTransactionGenerator.generateRandomTransaction(0, 100, 0, 100, true);
+                        TransactionTableDataModel randomTransaction = randomTransactionGenerator.generateRandomTransaction(0, 100, 0, 100);
                         transactionTableRepository.saveTransaction(randomTransaction);
                         uniqueTableRepository.saveEdge(TransactionMapper.mapTransactionTableDataModelToUniqueTableDataModel(randomTransaction, new UniqueTableDataModel()));
                         updateGraph(graphMapper.mapUniqueTableDataModelToGraph(),true);
                     }
-                    Thread.sleep(1000);
+                    Thread.sleep(10000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -139,13 +140,12 @@ public class QoSChainServiceImpl implements QoSChainService {
     }
 
 
-    private void updateGraph(Graph newGraph,boolean updatePath) {
+    private synchronized void updateGraph(Graph newGraph, boolean updatePath) {
         newGraph.edges().forEach(edge -> {
             int minDelay = (int) edge.getNumber("min_delay");
             int maxBandwidth = (int) edge.getNumber("max_bandwidth");
             this.graph.getEdge(edge.getId()).setAttribute("label", String.format("%d | %d", maxBandwidth, minDelay));
-            if(updatePath){
-
+            if (updatePath) {
                 this.graph.getEdge(edge.getId()).setAttribute("ui.style", "text-size: 25px; size: 1.5px; fill-color: black;");
             }
         });

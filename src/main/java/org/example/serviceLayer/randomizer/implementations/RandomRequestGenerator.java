@@ -1,6 +1,6 @@
 package org.example.serviceLayer.randomizer.implementations;
 
-import org.example.dataLayer.implementations.dataModels.RequestDataModel;
+import org.example.dataLayer.dataModels.RequestDataModel;
 import org.graphstream.graph.Graph;
 
 import java.util.Random;
