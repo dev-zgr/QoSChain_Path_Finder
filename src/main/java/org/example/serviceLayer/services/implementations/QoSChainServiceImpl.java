@@ -20,6 +20,7 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class QoSChainServiceImpl implements QoSChainService {
+    private final int TRANSACTION_CREATION_INTERVAL_MS = 100;
     private final PathFinder pathFinder;
     private volatile Graph graph;
     private final RandomTransactionGenerator randomTransactionGenerator;
@@ -60,12 +61,11 @@ public class QoSChainServiceImpl implements QoSChainService {
     }
 
     @Override
-    public synchronized Path calculateTheRequest(RequestDataModel request) {
-        pauseRandomTransactionGeneration(100000);
+    public  synchronized Path calculateTheRequest(RequestDataModel request) {
+        pauseRandomTransactionGeneration(3);
         Path path = pathFinder.findTheLeastDelayedPath(this.graph, request);
-        System.out.println(path.getEdgePath());
         if (path != null) {
-            synchronized (this) {
+
                 path.getEdgePath()
                         .stream()
                         .map(Element::getId)
@@ -83,14 +83,14 @@ public class QoSChainServiceImpl implements QoSChainService {
                                     temporaryData.getMax_bandwidth() - request.getRequired_bandwidth(),
                                     temporaryData.getMin_delay(),
                                     temporaryData.isInterConnectingNode());
-                        }).collect(Collectors.toList())
+                        }).toList()
                         .forEach((transaction) -> {
                                     transactionTableRepository.saveTransaction(transaction);
                                     uniqueTableRepository.saveEdge(TransactionMapper.mapTransactionTableDataModelToUniqueTableDataModel(transaction, new UniqueTableDataModel()));
                                 }
                         );
+
                 updateGraph(graphMapper.mapUniqueTableDataModelToGraph(), false);
-            }
         }
         return path;
     }
@@ -125,7 +125,7 @@ public class QoSChainServiceImpl implements QoSChainService {
                         uniqueTableRepository.saveEdge(TransactionMapper.mapTransactionTableDataModelToUniqueTableDataModel(randomTransaction, new UniqueTableDataModel()));
                         updateGraph(graphMapper.mapUniqueTableDataModelToGraph(),true);
                     }
-                    Thread.sleep(10000);
+                    Thread.sleep(TRANSACTION_CREATION_INTERVAL_MS);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -140,11 +140,13 @@ public class QoSChainServiceImpl implements QoSChainService {
     }
 
 
-    private synchronized void updateGraph(Graph newGraph, boolean updatePath) {
+    private void updateGraph(Graph newGraph, boolean updatePath) {
         newGraph.edges().forEach(edge -> {
             int minDelay = (int) edge.getNumber("min_delay");
             int maxBandwidth = (int) edge.getNumber("max_bandwidth");
             this.graph.getEdge(edge.getId()).setAttribute("label", String.format("%d | %d", maxBandwidth, minDelay));
+            this.graph.getEdge(edge.getId()).setAttribute("max_bandwidth", maxBandwidth);
+            this.graph.getEdge(edge.getId()).setAttribute("min_delay", minDelay);
             if (updatePath) {
                 this.graph.getEdge(edge.getId()).setAttribute("ui.style", "text-size: 25px; size: 1.5px; fill-color: black;");
             }

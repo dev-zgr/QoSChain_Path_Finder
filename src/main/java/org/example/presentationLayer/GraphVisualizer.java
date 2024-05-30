@@ -138,7 +138,7 @@ public class GraphVisualizer extends JFrame {
                     calculateButton.setEnabled(false);
 
                     // Create a Timer to re-enable the calculateButton after 10 seconds
-                    Timer timer = new Timer(10000, new ActionListener() {
+                    Timer timer = new Timer(3000, new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent evt) {
                             calculateButton.setEnabled(true); // Re-enable the button
@@ -170,7 +170,7 @@ public class GraphVisualizer extends JFrame {
                 if (isPathReserved) {
                     randomRequestButton.setEnabled(false);
 
-                    Timer timer = new Timer(10000, new ActionListener() {
+                    Timer timer = new Timer(3000, new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent evt) {
                             randomRequestButton.setEnabled(true); // Re-enable the button
