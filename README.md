@@ -4,8 +4,9 @@ QoSChain Path Finder is a Java-based project designed to find optimal paths in a
 
 ## Features
 
-- **Data Layer**: Manages access to data sources and repositories.
+- **Data Layer**: Manages access to data sources.
 - **Service Layer**: Implements core logic for path finding and random data generation.
+- **Presentation Layer**: Provides a user interface for interacting with the path finding functionality.
 - **Utility Classes**: Includes mappers and other helper classes for processing data.
 - **SQL Scripts**: Provides scripts to set up the necessary database tables and datasets.
 
